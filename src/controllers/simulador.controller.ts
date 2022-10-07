@@ -55,16 +55,22 @@ export class SimuladorController {
   @response(200, PING_RESPONSE)
   simuladorCronograma(): object {
     // Reply with a greeting, the current time, the url, and request headers
-    let tea = this.calcularTea(15, 1800.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
+    //let tea = this.calcularTea(15, 1800.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
+    let cuota = this.calcularCuota(15, 30.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
 
-    console.log("TEA CALCULADA", tea);
+    let cronogramaPagos = this.cronogramaPago(15, 30, cuota, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
 
-    return {
-      greeting: 'Hello from LoopBack',
-      date: new Date(),
-      url: this.req.url,
-      headers: Object.assign({}, this.req.headers),
-    };
+    // console.log("TEA CALCULADA", tea);
+    console.log("CUOTA CALCULADA", cuota);
+    console.log("CRONOGRAMA DE PAGOS", cronogramaPagos);
+
+    // return {
+    //   greeting: 'Hello from LoopBack',
+    //   date: new Date(),
+    //   url: this.req.url,
+    //   headers: Object.assign({}, this.req.headers),
+    // };
+    return cronogramaPagos;
   }
 
   calcularTea(plazo: number, cuota: number, montoFinanciar: number, fecha_inicio: Date, fecha_vencimiento: Date): number {
@@ -98,7 +104,7 @@ export class SimuladorController {
 
         interesesCuota = saldoCapital * ((1 + tasaSimulada) ** (diasCuota / 360) - 1);
         saldoCapital = saldoCapital - (cuota - interesesCuota);
-
+        if (numeroCuota === plazo)
         console.log("Fecha Inicio", fechaInicio, "Fecha Vencimiento", fechaVencimiento, this.obtenerDiasEntreDosFechas(fechaInicio, fechaVencimiento), interesesCuota, "tea", tasaSimulada);
       });
 
@@ -122,6 +128,122 @@ export class SimuladorController {
     };
 
     return tasaSimulada;
+  }
+
+  cronogramaPago(plazo: number, tea: number, cuota:number, montoFinanciar: number, fecha_inicio: Date, fecha_vencimiento: Date): object[] {
+    let cantidadCuotas = new Array(plazo).fill(0);
+    let cronogramaPago: object[] = [];
+    let saldoCapital = montoFinanciar;
+    let saldoInicial:number;
+    let saldoFinal:number;
+    let numeroCuota: number = 0;
+    let fechaInicio: Date;
+    let fechaVencimiento: Date;
+    let interesesCuota: number;
+    let capitalCuota: number;
+    let diasCuota: number;
+
+    cantidadCuotas.forEach((rs, idx, arr) => {
+      numeroCuota = idx + 1;
+
+      if (numeroCuota === 1) {
+        fechaInicio = moment(fecha_inicio, 'YYYY-MM-DD').toDate();
+        fechaVencimiento = moment(fecha_vencimiento, 'YYYY-MM-DD').toDate();
+        diasCuota = this.obtenerDiasEntreDosFechas(fechaInicio, fechaVencimiento);
+        saldoInicial = saldoCapital;
+      } else {
+        fechaInicio = fechaVencimiento;
+        fechaVencimiento = moment(fechaVencimiento, 'YYYY-MM-DD').add(1, 'months').toDate();
+        diasCuota = this.obtenerDiasEntreDosFechas(fechaInicio, fechaVencimiento);
+        saldoInicial = saldoFinal;
+      };
+
+      
+      interesesCuota = saldoInicial * ((1 + (tea/100)) ** (diasCuota / 360) - 1);
+      capitalCuota = (cuota - interesesCuota);
+      saldoFinal = saldoInicial - capitalCuota;
+
+      if (numeroCuota === plazo){
+        capitalCuota = saldoInicial;
+        cuota = capitalCuota + interesesCuota;
+        saldoFinal = 0.00
+      };
+
+
+      cronogramaPago.push({
+        numeroCuota: numeroCuota,
+        fechaInicio: fechaInicio,
+        fechaVencimiento: fechaVencimiento,
+        diasCuota: diasCuota,
+        saldoInicial: saldoInicial,
+        saldoFinal: saldoFinal,
+        cuota: cuota,
+        interesesCuota: interesesCuota,
+        capitalCuota: capitalCuota,
+        seguroBien: 0.00,
+        seguroDesgravamen: 0.00
+       })
+
+    });
+
+    return cronogramaPago;
+  }
+
+  calcularCuota(plazo: number, tea: number, montoFinanciar: number, fecha_inicio: Date, fecha_vencimiento: Date): number {
+    let cantidadCuotas = new Array(plazo).fill(0);
+    let cuotaSimulada: number = 100000;
+    let cuotaCalculada: number = cuotaSimulada / 2;
+    let iteraciones: number = 0;
+    let a = moment().hours();
+
+    while (iteraciones < 100) {
+
+      let saldoCapital = montoFinanciar;
+      let numeroCuota: number = 0;
+      let fechaInicio: Date;
+      let fechaVencimiento: Date;
+      let interesesCuota: number;
+      let diasCuota: number;
+      
+      cantidadCuotas.forEach((rs, idx, arr) => {
+        numeroCuota = idx + 1;
+
+        if (numeroCuota === 1) {
+          fechaInicio = moment(fecha_inicio, 'YYYY-MM-DD').toDate();
+          fechaVencimiento = moment(fecha_vencimiento, 'YYYY-MM-DD').toDate();
+          diasCuota = this.obtenerDiasEntreDosFechas(fechaInicio, fechaVencimiento);
+        } else {
+          fechaInicio = fechaVencimiento;
+          fechaVencimiento = moment(fechaVencimiento, 'YYYY-MM-DD').add(1, 'months').toDate();
+          diasCuota = this.obtenerDiasEntreDosFechas(fechaInicio, fechaVencimiento);
+        };
+
+        interesesCuota = saldoCapital * ((1 + (tea/100)) ** (diasCuota / 360) - 1);
+        saldoCapital = saldoCapital - (cuotaSimulada - interesesCuota);
+        if (numeroCuota === plazo)
+        console.log("Fecha Inicio", fechaInicio, "Fecha Vencimiento", fechaVencimiento, this.obtenerDiasEntreDosFechas(fechaInicio, fechaVencimiento), saldoCapital, "cuota", cuotaSimulada);
+      });
+
+
+
+      if (Math.abs(saldoCapital) < 0.25) {
+        console.log("Saldo Capital Final", saldoCapital, Math.abs(saldoCapital));
+        break;
+      }
+
+      if (saldoCapital < 0) {
+        cuotaSimulada = cuotaSimulada - cuotaCalculada;
+      } else {
+        cuotaSimulada = cuotaSimulada + cuotaCalculada;
+      };
+
+      cuotaCalculada = cuotaCalculada / 2;
+
+      iteraciones += 1;
+      console.log("iteraciones", iteraciones);
+    };
+
+    return cuotaSimulada;
   }
 
   obtenerDiasEntreDosFechas(fechaInicial: Date, fechaFinal: Date): number {
