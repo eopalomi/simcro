@@ -1,7 +1,7 @@
 import {inject} from '@loopback/core';
 
 import {
-  get, post, Request, response,
+  get, post, Request, requestBody, response,
   ResponseObject, RestBindings
 } from '@loopback/rest';
 
@@ -53,16 +53,68 @@ export class SimuladorController {
   // Map to `GET /ping`
   @post('/simcro')
   @response(200, PING_RESPONSE)
-  simuladorCronograma(): object {
+  simuladorCronograma(
+    @requestBody({
+      description: 'informacion requerida',
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['tipo', 'plazo', 'montoFinanciar', 'fecha_inicio','fecha_vencimiento'],
+            properties: {
+              tipo: {
+                type: 'string',
+              },
+              plazo: {
+                type: 'number',
+              },
+              tea: {
+                type: 'number',
+              },
+              cuota: {
+                type: 'number',
+              },
+              montoFinanciar: {
+                type: 'number',
+              },
+              fecha_inicio: {
+                type: 'string',
+              },
+              fecha_vencimiento: {
+                type: 'string',
+              }
+            },
+          },
+        }
+      }
+    }) bodyRequest: any
+  ): object {
     // Reply with a greeting, the current time, the url, and request headers
     //let tea = this.calcularTea(15, 1800.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
-    let cuota = this.calcularCuota(15, 30.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
 
-    let cronogramaPagos = this.cronogramaPago(15, 30, cuota, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
+    
+    let cronogramaPagos !: any;
+    //let cronogramaPagos = this.cronogramaPago(15, 30, cuota, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
+    
+
+    if (bodyRequest.tipo === '01'){
+      console.log('entro 01');
+      // let cuota = this.calcularCuota(15, 30.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
+      let cuota = this.calcularCuota(bodyRequest.plazo, bodyRequest.tea, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
+      cronogramaPagos = this.cronogramaPago(bodyRequest.plazo, bodyRequest.tea, cuota, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
+    };
+
+    if (bodyRequest.tipo==='02'){
+      // let tea = this.calcularTea(15, 1800.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
+      // let tea = this.calcularTea(bodyRequest.plazo, bodyRequest.cuota, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
+      // cronogramaPagos = this.cronogramaPago(bodyRequest.plazo, tea, bodyRequest.cuota, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
+    };
 
     // console.log("TEA CALCULADA", tea);
-    console.log("CUOTA CALCULADA", cuota);
-    console.log("CRONOGRAMA DE PAGOS", cronogramaPagos);
+    // console.log("CUOTA CALCULADA", cuota);
+    // console.log("CRONOGRAMA DE PAGOS", cronogramaPagos);
+    console.log("BODY REQUEST", bodyRequest);
 
     // return {
     //   greeting: 'Hello from LoopBack',
@@ -172,14 +224,14 @@ export class SimuladorController {
 
       cronogramaPago.push({
         numeroCuota: numeroCuota,
-        fechaInicio: fechaInicio,
-        fechaVencimiento: fechaVencimiento,
+        fechaInicio: moment(fechaInicio, 'YYYY-MM-DD').toISOString().substring(0, 10),
+        fechaVencimiento: moment(fechaVencimiento, 'YYYY-MM-DD').toISOString().substring(0, 10),
         diasCuota: diasCuota,
-        saldoInicial: saldoInicial,
-        saldoFinal: saldoFinal,
-        cuota: cuota,
-        interesesCuota: interesesCuota,
-        capitalCuota: capitalCuota,
+        saldoInicial: Number(saldoInicial.toFixed(2)),
+        saldoFinal: Number(saldoFinal.toFixed(2)),
+        cuota: Number(cuota.toFixed(2)),
+        interesesCuota: Number(interesesCuota.toFixed(2)),
+        capitalCuota: Number(capitalCuota.toFixed(2)),
         seguroBien: 0.00,
         seguroDesgravamen: 0.00
        })
