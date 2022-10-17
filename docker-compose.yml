@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  app:
+    # image: registry.devacceso.com/${IMAGENAME}:${CI_PIPELINE_ID}
+    image: registry.devacceso.com/${IMAGENAME}:${CI_PIPELINE_ID}
+    build: .
+    restart: "no"
+    #restart: always
+    ports:
+      - "${PORTSALIDA}:${PORTDOCKER}"
+    #command: pm2-runtime server.config.js --env ${ENVDEPLOY}
+    command: npm start --env ${ENVDEPLOY}
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://192.168.4.239:12201"
+        tag: ${IMAGENAME}
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.name == ${NODO}
