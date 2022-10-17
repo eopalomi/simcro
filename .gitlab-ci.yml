@@ -5,11 +5,11 @@ before_script:
 
 variables:
     # PORTDOCKER: 3325
-    PORTDOCKER: 3500
+    PORTDOCKER: 3105
     # PORTSALIDA: 3325
-    PORTSALIDA: 3500
-    IMAGENAME: lb-demo-ts
-    DOCKER_STACK: lb-demo-ts
+    PORTSALIDA: 3105
+    IMAGENAME: lb-simcro
+    DOCKER_STACK: lb-simcro
 
 stages:
   - build
