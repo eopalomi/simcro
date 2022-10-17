@@ -1,1 +1,1 @@
-export * from './cronograma.repository';
+
