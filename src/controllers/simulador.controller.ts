@@ -1,10 +1,7 @@
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
 
-import {
-  get, post, Request, requestBody, response,
-  ResponseObject, RestBindings
-} from '@loopback/rest';
+import {Request, ResponseObject, RestBindings} from '@loopback/rest';
 
 import moment from 'moment';
 import {CronogramaRepository} from '../repositories';
@@ -42,93 +39,93 @@ export class SimuladorController {
     @repository(CronogramaRepository) public CronogramaPagosRepository: CronogramaRepository,
   ) { }
 
-  // Map to `GET /ping`
-  @get('/hello_cronog')
-  @response(200, PING_RESPONSE)
-  ping(): object {
-    // Reply with a greeting, the current time, the url, and request headers
-    return {
-      greeting: 'Hello from LoopBack cronog',
-      date: new Date(),
-      url: this.req.url,
-      headers: Object.assign({}, this.req.headers),
-    };
-  }
+  // // Map to `GET /ping`
+  // @get('/hello_cronog')
+  // @response(200, PING_RESPONSE)
+  // ping(): object {
+  //   // Reply with a greeting, the current time, the url, and request headers
+  //   return {
+  //     greeting: 'Hello from LoopBack cronog',
+  //     date: new Date(),
+  //     url: this.req.url,
+  //     headers: Object.assign({}, this.req.headers),
+  //   };
+  // }
 
   // Map to `GET /ping`
-  @post('/simcro_prueba')
-  @response(200, PING_RESPONSE)
-  simuladorCronogramaPagos(
-    @requestBody({
-      description: 'informacion requerida',
-      required: true,
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            required: ['tipo', 'plazo', 'montoFinanciar', 'fecha_inicio', 'fecha_vencimiento'],
-            properties: {
-              tipo: {
-                type: 'string',
-              },
-              plazo: {
-                type: 'number',
-              },
-              tea: {
-                type: 'number',
-              },
-              cuota: {
-                type: 'number',
-              },
-              montoFinanciar: {
-                type: 'number',
-              },
-              fecha_inicio: {
-                type: 'string',
-              },
-              fecha_vencimiento: {
-                type: 'string',
-              }
-            },
-          },
-        }
-      }
-    }) bodyRequest: any
-  ): object {
-    // Reply with a greeting, the current time, the url, and request headers
-    //let tea = this.calcularTea(15, 1800.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
+  // @post('/simcro_prueba')
+  // @response(200, PING_RESPONSE)
+  // simuladorCronogramaPagos(
+  //   @requestBody({
+  //     description: 'informacion requerida',
+  //     required: true,
+  //     content: {
+  //       'application/json': {
+  //         schema: {
+  //           type: 'object',
+  //           required: ['tipo', 'plazo', 'montoFinanciar', 'fecha_inicio', 'fecha_vencimiento'],
+  //           properties: {
+  //             tipo: {
+  //               type: 'string',
+  //             },
+  //             plazo: {
+  //               type: 'number',
+  //             },
+  //             tea: {
+  //               type: 'number',
+  //             },
+  //             cuota: {
+  //               type: 'number',
+  //             },
+  //             montoFinanciar: {
+  //               type: 'number',
+  //             },
+  //             fecha_inicio: {
+  //               type: 'string',
+  //             },
+  //             fecha_vencimiento: {
+  //               type: 'string',
+  //             }
+  //           },
+  //         },
+  //       }
+  //     }
+  //   }) bodyRequest: any
+  // ): object {
+  //   // Reply with a greeting, the current time, the url, and request headers
+  //   //let tea = this.calcularTea(15, 1800.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
 
 
-    let CronogramaPagosPagos !: any;
-    //let CronogramaPagosPagos = this.CronogramaPagosPago(15, 30, cuota, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
+  //   let CronogramaPagosPagos !: any;
+  //   //let CronogramaPagosPagos = this.CronogramaPagosPago(15, 30, cuota, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
 
 
-    if (bodyRequest.tipo === '01') {
-      console.log('entro 01');
-      // let cuota = this.calcularCuota(15, 30.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
-      let cuota = this.calcularCuota(bodyRequest.plazo, bodyRequest.tea, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
-      CronogramaPagosPagos = this.CronogramaPagosPago(bodyRequest.plazo, bodyRequest.tea, cuota, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
-    };
+  //   if (bodyRequest.tipo === '01') {
+  //     console.log('entro 01');
+  //     // let cuota = this.calcularCuota(15, 30.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
+  //     let cuota = this.calcularCuota(bodyRequest.plazo, bodyRequest.tea, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
+  //     CronogramaPagosPagos = this.CronogramaPagosPago(bodyRequest.plazo, bodyRequest.tea, cuota, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
+  //   };
 
-    if (bodyRequest.tipo === '02') {
-      // let tea = this.calcularTea(15, 1800.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
-      // let tea = this.calcularTea(bodyRequest.plazo, bodyRequest.cuota, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
-      // CronogramaPagosPagos = this.CronogramaPagosPago(bodyRequest.plazo, tea, bodyRequest.cuota, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
-    };
+  //   if (bodyRequest.tipo === '02') {
+  //     // let tea = this.calcularTea(15, 1800.00, 25000.00, new Date('2022-09-10'), new Date('2022-11-10'));
+  //     // let tea = this.calcularTea(bodyRequest.plazo, bodyRequest.cuota, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
+  //     // CronogramaPagosPagos = this.CronogramaPagosPago(bodyRequest.plazo, tea, bodyRequest.cuota, bodyRequest.montoFinanciar, new Date(bodyRequest.fecha_inicio), new Date(bodyRequest.fecha_vencimiento));
+  //   };
 
-    // console.log("TEA CALCULADA", tea);
-    // console.log("CUOTA CALCULADA", cuota);
-    // console.log("CronogramaPagos DE PAGOS", CronogramaPagosPagos);
-    console.log("BODY REQUEST", bodyRequest);
+  //   // console.log("TEA CALCULADA", tea);
+  //   // console.log("CUOTA CALCULADA", cuota);
+  //   // console.log("CronogramaPagos DE PAGOS", CronogramaPagosPagos);
+  //   console.log("BODY REQUEST", bodyRequest);
 
-    // return {
-    //   greeting: 'Hello from LoopBack',
-    //   date: new Date(),
-    //   url: this.req.url,
-    //   headers: Object.assign({}, this.req.headers),
-    // };
-    return CronogramaPagosPagos;
-  }
+  //   // return {
+  //   //   greeting: 'Hello from LoopBack',
+  //   //   date: new Date(),
+  //   //   url: this.req.url,
+  //   //   headers: Object.assign({}, this.req.headers),
+  //   // };
+  //   return CronogramaPagosPagos;
+  // }
 
   // @get('/simcro/{id}')
   // @response(200, {
