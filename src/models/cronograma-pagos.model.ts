@@ -1,94 +1,83 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model()
-export class Cronograma extends Entity {
+@model({
+  settings: {
+    strict: false,
+    strictObjectIDCoercion: true,
+    mongodb: {collection: "info_prueba"}
+  }
+})
+export class CronogramaPagos extends Entity {
   @property({
     type: 'string',
     id: true,
-    generated: true,
+    generated: true
   })
-  id?: string;
+  id: string;
 
   @property({
-    type: 'string',
-    required: true,
-  })
-  id_cronograma: string;
-
-  @property({
-    type: 'string',
-    required: true,
+    type: 'date',
   })
   fechaInicio: string;
 
   @property({
-    type: 'string',
-    required: true,
+    type: 'date',
   })
   fechaVencimiento: string;
 
   @property({
     type: 'number',
-    required: true,
   })
   diasCuota: number;
 
   @property({
     type: 'number',
-    required: true,
-  })
-  numeroCuota: number;
-
-  @property({
-    type: 'number',
-    required: true,
   })
   saldoInicial: number;
 
   @property({
     type: 'number',
-    required: true,
   })
   saldoFinal: number;
 
   @property({
     type: 'number',
-    required: true,
   })
   cuota: number;
 
   @property({
     type: 'number',
-    required: true,
   })
   interesCuota: number;
 
   @property({
     type: 'number',
-    required: true,
   })
   capitalCuota: number;
 
   @property({
     type: 'number',
-    required: true,
   })
   seguroBien: number;
 
   @property({
     type: 'number',
-    required: true,
   })
   seguroDesgravamen: number;
 
+  // Define well-known properties here
 
-  constructor(data?: Partial<Cronograma>) {
+  // Indexer property to allow additional data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [prop: string]: any;
+
+  constructor(data?: Partial<CronogramaPagos>) {
     super(data);
   }
 }
 
-export interface CronogramaRelations {
-  // describe navigational properties here
-}
+// export interface CronogramaPagosRelations {
+//   // describe navigational properties here
+// }
 
-export type CronogramaWithRelations = Cronograma & CronogramaRelations;
+// export type CronogramaPagosWithRelations = CronogramaPagos & CronogramaPagosRelations;

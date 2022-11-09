@@ -59,13 +59,15 @@
     "loopback-connector-mongodb": "^5.6.0",
     "loopback-connector-postgresql": "^5.5.2",
     "moment": "^2.29.4",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@loopback/build": "^9.0.3",
     "@loopback/eslint-config": "^13.0.3",
     "@loopback/testlab": "^5.0.3",
     "@types/node": "^14.18.26",
+    "@types/uuid": "^8.3.4",
     "eslint": "^8.22.0",
     "nodemon": "^2.0.20",
     "source-map-support": "^0.5.21",

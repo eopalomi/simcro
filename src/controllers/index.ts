@@ -1,3 +1,3 @@
-export * from './ping.controller';
+export * from './simcro.controller';
 export * from './simulador.controller';
 
